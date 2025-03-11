@@ -2,5 +2,6 @@
 
 using RentedListCore.Benchmarks;
 
-
-BenchmarkRunner.Run<EnumerationBenchmarks>();
+//BenchmarkRunner.Run<IndexingBenchmarks>();
+//BenchmarkRunner.Run<EnumerationBenchmarks>();
+BenchmarkRunner.Run<CreationBenchmarks>();

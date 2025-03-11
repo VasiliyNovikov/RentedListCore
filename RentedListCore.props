@@ -1,0 +1,15 @@
+<Project>
+  <PropertyGroup>
+    <TargetFrameworks>net9.0;net8.0;netstandard2.0</TargetFrameworks>
+    <TestTargetFrameworks>net9.0;net8.0;net6.0;net481</TestTargetFrameworks>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <AnalysisMode>Recommended</AnalysisMode>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <SuppressTfmSupportBuildWarnings Condition="'$(TargetFramework)' == 'net6.0'">true</SuppressTfmSupportBuildWarnings>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0' or '$(TargetFramework)' == 'net481'">
+    <PackageReference Include="Microsoft.Bcl.Memory" />
+  </ItemGroup>
+</Project>

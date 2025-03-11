@@ -1,3 +1,6 @@
-﻿using System;
+﻿using BenchmarkDotNet.Running;
 
-Console.WriteLine("Hello, World!");
+using RentedListCore.Benchmarks;
+
+
+BenchmarkRunner.Run<EnumerationBenchmarks>();

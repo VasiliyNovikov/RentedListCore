@@ -5,6 +5,9 @@
     <TargetFrameworks>$(TestTargetFrameworks)</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="BenchmarkDotNet" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\RentedListCore\RentedListCore.csproj" />
   </ItemGroup>
 </Project>

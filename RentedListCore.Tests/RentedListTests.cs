@@ -8,7 +8,7 @@ public class RentedListTests
     [TestMethod]
     public void Constructor_ShouldInitializeWithDefaultCapacity()
     {
-        using RentedList<int> list = new();
+        using RentedList<int> list = [];
         Assert.AreEqual(0, list.Count);
         Assert.AreEqual(0, list.Capacity);
     }
@@ -56,7 +56,7 @@ public class RentedListTests
     public void AsSpan_ShouldReturnValidSpan()
     {
         int[] values = [5, 10];
-        using RentedList<int> list = new();
+        using RentedList<int> list = [];
         foreach (var value in values)
             list.Add(value);
         CollectionAssert.AreEqual(values, list.Span.ToArray());
@@ -66,7 +66,7 @@ public class RentedListTests
     public void Indexer_ShouldReturnCorrectSpanSlice()
     {
         Span<int> values = [1, 2, 3, 4];
-        using RentedList<int> list = new();
+        using RentedList<int> list = [];
         foreach (var value in values)
             list.Add(value);
         var sliceRange = 1..3;
@@ -76,7 +76,7 @@ public class RentedListTests
     [TestMethod]
     public void Dispose_ShouldReturnMemoryToPool()
     {
-        RentedList<int> list = new();
+        RentedList<int> list = [];
         list.Add(10);
         list.Dispose();
         Assert.AreEqual(0, list.Count);

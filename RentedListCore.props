@@ -1,7 +1,8 @@
 <Project>
   <PropertyGroup>
     <TargetFrameworks>net10.0;net9.0;net8.0;netstandard2.0</TargetFrameworks>
-    <TestTargetFrameworks>net10.0;net9.0;net8.0;net6.0;net481</TestTargetFrameworks>
+    <TestTargetFrameworks>net10.0;net9.0;net8.0;net6.0</TestTargetFrameworks>
+    <TestTargetFrameworks Condition="'$(OS)' == 'Windows_NT'">$(TestTargetFrameworks);net481</TestTargetFrameworks>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <AnalysisMode>Recommended</AnalysisMode>

@@ -6,6 +6,7 @@ using BenchmarkDotNet.Attributes;
 namespace RentedListCore.Benchmarks;
 
 [ShortRunJob]
+[MemoryDiagnoser]
 public class IndexingBenchmarks
 {
     private const int ItemCount = 10000;

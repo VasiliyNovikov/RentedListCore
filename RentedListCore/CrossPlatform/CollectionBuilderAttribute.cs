@@ -1,5 +1,5 @@
-﻿#pragma warning disable IDE0055 // False positive
-#if !NET8_0_OR_GREATER
+﻿#if !NET8_0_OR_GREATER
+#pragma warning disable IDE0055 // False positive
 namespace System.Runtime.CompilerServices;
 
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Interface, Inherited = false)]

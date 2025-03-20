@@ -77,7 +77,7 @@ public struct RentedList<T> : IList<T>, ICollection, IDisposable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public RentedList(params ReadOnlySpan<T> items)
     {
-        if (items.Length == 0)
+        if (items.IsEmpty)
             _array = null;
         else
             items.CopyTo(_array = ArrayPool.Rent(items.Length));
@@ -99,7 +99,40 @@ public struct RentedList<T> : IList<T>, ICollection, IDisposable
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Add(T item) => Insert(_count, item);
+    public void Add(T item)
+    {
+        if (_array is null)
+            _array = ArrayPool.Rent(1);
+        else if (_count >= _array.Length)
+        {
+            var newArray = ArrayPool.Rent(_array.Length + 1);
+            Span.CopyTo(newArray);
+            ArrayPool.Return(_array);
+            _array = newArray;
+        }
+        _array[_count++] = item;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void AddRange(params ReadOnlySpan<T> items)
+    {
+        if (items.IsEmpty)
+            return;
+
+        var newCount = _count + items.Length;
+        if (_array is null)
+            _array = ArrayPool.Rent(newCount);
+        else if (newCount > _array.Length)
+        {
+            var newArray = ArrayPool.Rent(newCount);
+            _array.AsSpan(0, _count).CopyTo(newArray);
+            ArrayPool.Return(_array);
+            _array = newArray;
+        }
+
+        items.CopyTo(_array.AsSpan(_count));
+        _count = newCount;
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Insert(int index, T item)
@@ -107,23 +140,22 @@ public struct RentedList<T> : IList<T>, ICollection, IDisposable
         if ((uint)index > (uint)_count)
             throw new ArgumentOutOfRangeException(nameof(index));
 
-        if (_array is null)
-            _array = ArrayPool.Rent(1);
-        else
+        if (index == _count)
         {
-            var tailCount = _count - index;
-            if (_count >= _array.Length)
-            {
-                var newArray = ArrayPool.Rent(_array.Length + 1);
-                Array.Copy(_array, 0, newArray, 0, index);
-                if (tailCount > 0)
-                    Array.Copy(_array, index, newArray, index + 1, tailCount);
-                ArrayPool.Return(_array);
-                _array = newArray;
-            }
-            else if (tailCount > 0)
-                Array.Copy(_array, index, _array, index + 1, tailCount);
+            Add(item);
+            return;
         }
+
+        if (_count >= _array!.Length)
+        {
+            var newArray = ArrayPool.Rent(_array.Length + 1);
+            _array.AsSpan(0, index).CopyTo(newArray);
+            _array.AsSpan(index, _count - index).CopyTo(newArray.AsSpan(index + 1));
+            ArrayPool.Return(_array);
+            _array = newArray;
+        }
+        else
+            _array.AsSpan(index, _count - index).CopyTo(_array.AsSpan(index + 1));
 
         _array[index] = item;
         ++_count;
@@ -134,11 +166,7 @@ public struct RentedList<T> : IList<T>, ICollection, IDisposable
     {
         if ((uint)index >= (uint)_count)
             throw new ArgumentOutOfRangeException(nameof(index));
-
-        var tailCount = _count - index - 1;
-        if (tailCount > 0)
-            Array.Copy(_array!, index + 1, _array!, index, tailCount);
-        --_count;
+        RemoveAtUnsafe(index);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -147,8 +175,17 @@ public struct RentedList<T> : IList<T>, ICollection, IDisposable
         var index = IndexOf(item);
         if (index < 0)
             return false;
-        RemoveAt(index);
+        RemoveAtUnsafe(index);
         return true;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private void RemoveAtUnsafe(int index)
+    {
+        var tailCount = _count - index - 1;
+        if (tailCount > 0)
+            _array.AsSpan(index + 1, tailCount).CopyTo(_array.AsSpan(index));
+        --_count;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -216,9 +253,6 @@ public struct RentedList<T> : IList<T>, ICollection, IDisposable
         private readonly int _count;
         private int _index;
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Reset() => _index = -1;
-
         public readonly T Current
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -236,9 +270,12 @@ public struct RentedList<T> : IList<T>, ICollection, IDisposable
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool MoveNext() => ++_index < _count;
+        public readonly void Dispose() { }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public readonly void Dispose() { }
+        public void Reset() => _index = -1;
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool MoveNext() => ++_index < _count;
     }
 }

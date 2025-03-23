@@ -114,15 +114,17 @@ public struct RentedList<T> : IList<T>, ICollection, IDisposable
             _array = ArrayPool.Rent(1);
             _array[0] = item;
             _count = 1;
+            return;
         }
-        else if (_count >= _array.Length)
+
+        if (_count >= _array.Length)
         {
             var newArray = ArrayPool.Rent(_array.Length + 1);
             Span.CopyTo(newArray);
             ArrayPool.Return(_array);
             _array = newArray;
-            _array[_count++] = item;
         }
+        _array[_count++] = item;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

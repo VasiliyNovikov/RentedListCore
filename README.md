@@ -10,11 +10,11 @@ Disposable List structure allocating memory from ArrayPool
 ## Adding elements
 ### [Code](https://github.com/VasiliyNovikov/RentedListCore/blob/master/RentedListCore.Benchmarks/AdditionBenchmarks.cs)
 ### Results
-| Method                 | Mean     | Error       | StdDev   | Ratio | RatioSD | Gen0   | Gen1   | Allocated | Alloc Ratio |
-|----------------------- |---------:|------------:|---------:|------:|--------:|-------:|-------:|----------:|------------:|
-| List_Add               | 827.2 ns | 1,177.00 ns | 64.52 ns |  1.00 |    0.09 | 0.4473 | 0.0076 |    8424 B |        1.00 |
-| RentedList_Add         | 282.3 ns |    54.64 ns |  2.99 ns |  0.34 |    0.02 | 0.0043 |      - |      88 B |        0.01 |
-| RentedList_Add_Dispose | 278.3 ns |    11.16 ns |  0.61 ns |  0.34 |    0.02 |      - |      - |         - |        0.00 |
+| Method                 | Mean     | Error     | StdDev   | Ratio | RatioSD | Gen0   | Gen1   | Allocated | Alloc Ratio |
+|----------------------- |---------:|----------:|---------:|------:|--------:|-------:|-------:|----------:|------------:|
+| List_Add               | 797.3 ns | 185.45 ns | 10.17 ns |  1.00 |    0.02 | 0.4473 | 0.0076 |    8424 B |        1.00 |
+| RentedList_Add         | 516.5 ns |  61.73 ns |  3.38 ns |  0.65 |    0.01 | 0.2174 | 0.0029 |    4120 B |        0.49 |
+| RentedList_Add_Dispose | 467.9 ns |  55.01 ns |  3.02 ns |  0.59 |    0.01 |      - |      - |         - |        0.00 |
 
 ## Enumerating elements
 ### [Code](https://github.com/VasiliyNovikov/RentedListCore/blob/master/RentedListCore.Benchmarks/EnumerationBenchmarks.cs)

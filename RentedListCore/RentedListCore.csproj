@@ -1,10 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="../RentedListCore.props" />
   <PropertyGroup>
-    <Version>0.1.2</Version>
+    <Version>0.1.3</Version>
     <PackageVersion>$(Version)$(VersionSuffix)</PackageVersion>
     <Authors>Vasyl Novikov</Authors>
-    <Description>Disposable List struct allocating memory from ArrayPool</Description>
+    <Description>Disposable List structure allocating memory from ArrayPool</Description>
     <Copyright>Vasyl Novikov</Copyright>
     <PackageProjectUrl>https://github.com/VasiliyNovikov/RentedListCore</PackageProjectUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>

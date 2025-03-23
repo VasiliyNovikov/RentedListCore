@@ -9,7 +9,7 @@ namespace RentedListCore.Benchmarks;
 [MemoryDiagnoser]
 public class CreationBenchmarks
 {
-    private const int ItemCount = 10000;
+    private const int ItemCount = 1000;
     private readonly int[] _source = [.. Enumerable.Range(0, ItemCount)];
 
     [Benchmark(Baseline = true)]

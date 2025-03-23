@@ -14,6 +14,8 @@ public struct RentedList<T> : IList<T>, ICollection, IDisposable
     private T[]? _array;
     private int _count;
 
+    public static readonly RentedList<T> Empty;
+
     public readonly int Count
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -78,10 +80,16 @@ public struct RentedList<T> : IList<T>, ICollection, IDisposable
     public RentedList(params ReadOnlySpan<T> items)
     {
         if (items.IsEmpty)
+        {
             _array = null;
+            _count = 0;
+        }
         else
-            items.CopyTo(_array = ArrayPool.Rent(items.Length));
-        _count = items.Length;
+        {
+            _array = ArrayPool.Rent(items.Length);
+            items.CopyTo(_array);
+            _count = items.Length;
+        }
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -102,8 +110,14 @@ public struct RentedList<T> : IList<T>, ICollection, IDisposable
     public void Add(T item)
     {
         if (_array is null)
+        {
             _array = ArrayPool.Rent(1);
-        else if (_count >= _array.Length)
+            _array[0] = item;
+            _count = 1;
+            return;
+        }
+
+        if (_count >= _array.Length)
         {
             var newArray = ArrayPool.Rent(_array.Length + 1);
             Span.CopyTo(newArray);

@@ -3,21 +3,22 @@ using System.Linq;
 
 using BenchmarkDotNet.Attributes;
 
+using RentedListCore.Benchmarks.CrossPlatform;
+
 namespace RentedListCore.Benchmarks;
 
 [ShortRunJob]
-[MemoryDiagnoser]
 public class EnumerationBenchmarks
 {
     private const int ItemCount = 10000;
-    private readonly int[] _array = [.. Enumerable.Range(0, ItemCount)];
-    private readonly List<int> _list = [.. Enumerable.Range(0, ItemCount)];
-    private readonly RentedList<int> _rentedList = [.. Enumerable.Range(0, ItemCount)];
+    private static readonly int[] Array = [.. Enumerable.Range(0, ItemCount).Select(i => SharedRandom.Instance.Next())];
+    private static readonly List<int> List = [.. Array];
+    private static readonly RentedList<int> RentedList = [.. Array];
 
     [Benchmark(Baseline = true)]
     public int Array_Enumerator()
     {
-        var list = _array;
+        var list = Array;
         var sum = 0;
         foreach (var item in list)
             sum += item;
@@ -27,7 +28,7 @@ public class EnumerationBenchmarks
     [Benchmark]
     public int List_Enumerator()
     {
-        var list = _list;
+        var list = List;
         var sum = 0;
         foreach (var item in list)
             sum += item;
@@ -37,7 +38,7 @@ public class EnumerationBenchmarks
     [Benchmark]
     public int RentedList_Enumerator()
     {
-        var list = _rentedList;
+        var list = RentedList;
         var sum = 0;
         foreach (var item in list)
             sum += item;

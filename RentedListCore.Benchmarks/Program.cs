@@ -2,7 +2,7 @@
 
 using RentedListCore.Benchmarks;
 
-//BenchmarkRunner.Run<CreationBenchmarks>();
-//BenchmarkRunner.Run<EnumerationBenchmarks>();
+//BenchmarkRunner.Run<AdditionBenchmarks>();
 //BenchmarkRunner.Run<IndexingBenchmarks>();
-BenchmarkRunner.Run<AdditionBenchmarks>();
+//BenchmarkRunner.Run<CreationBenchmarks>();
+BenchmarkRunner.Run<EnumerationBenchmarks>();

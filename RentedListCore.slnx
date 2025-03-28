@@ -1,0 +1,17 @@
+<Solution>
+  <Folder Name="/.github/" />
+  <Folder Name="/.github/workflows/">
+    <File Path=".github/workflows/pipeline.yml" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path=".gitignore" />
+    <File Path="Directory.Packages.props" />
+    <File Path="LICENSE" />
+    <File Path="README.md" />
+    <File Path="RentedListCore.props" />
+  </Folder>
+  <Project Path="RentedListCore/RentedListCore.csproj" />
+  <Project Path="RentedListCore.Tests/RentedListCore.Tests.csproj" />
+  <Project Path="RentedListCore.Benchmarks/RentedListCore.Benchmarks.csproj" />
+</Solution>

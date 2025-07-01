@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="../RentedListCore.props" />
   <PropertyGroup>
-    <Version>0.1.5</Version>
+    <Version>0.1.6</Version>
     <PackageVersion>$(Version)$(VersionSuffix)</PackageVersion>
     <Authors>Vasyl Novikov</Authors>
     <Description>Disposable List structure allocating memory from ArrayPool</Description>

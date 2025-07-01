@@ -66,12 +66,15 @@ public struct RentedList<T> : IList<T>, ICollection, IDisposable
     public readonly ArraySegment<T> Segment
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        get => _array is null ? new ArraySegment<T>([]) : new ArraySegment<T>(_array, 0, _count);
+        get => _array is null ? ArraySegment<T>.Empty : new ArraySegment<T>(_array, 0, _count);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public RentedList(int initialCapacity)
     {
+        if (initialCapacity < 0)
+            throw new ArgumentOutOfRangeException(nameof(initialCapacity));
+
         _array = initialCapacity > 0 ? ArrayPool.Rent(initialCapacity) : null;
         _count = 0;
     }

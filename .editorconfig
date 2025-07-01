@@ -28,6 +28,9 @@ dotnet_diagnostic.IDE0023.severity = none
 dotnet_diagnostic.IDE0032.severity = none
 dotnet_diagnostic.IDE0055.severity = error
 
+[**/CrossPlatform/*.cs]
+dotnet_diagnostic.IDE0055.severity = none  # False positive
+
 [*{Tests,Benchmarks}.cs]
 dotnet_diagnostic.CA1707.severity = none
 dotnet_diagnostic.CA1822.severity = none

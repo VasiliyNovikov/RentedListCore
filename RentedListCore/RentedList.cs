@@ -72,9 +72,7 @@ public struct RentedList<T> : IList<T>, ICollection, IDisposable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public RentedList(int initialCapacity)
     {
-        if (initialCapacity < 0)
-            throw new ArgumentOutOfRangeException(nameof(initialCapacity));
-
+        ArgumentOutOfRangeException.ThrowIfNegative(initialCapacity);
         _array = initialCapacity > 0 ? ArrayPool.Rent(initialCapacity) : null;
         _count = 0;
     }

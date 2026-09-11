@@ -19,7 +19,7 @@ public class RentedListTests
     {
         int[] values = [1, 2, 3];
         using RentedList<int> list = new(values);
-        CollectionAssert.AreEqual(values, list);
+        Assert.AreSequenceEqual(values, list);
     }
 
     [TestMethod]
@@ -27,7 +27,7 @@ public class RentedListTests
     {
         int[] values = [1, 2, 3];
         using RentedList<int> list = [1, 2, 3];
-        CollectionAssert.AreEqual(values, list);
+        Assert.AreSequenceEqual(values, list);
     }
 
     [TestMethod]
@@ -38,7 +38,7 @@ public class RentedListTests
         foreach (var value in values)
             list.Add(value);
         Assert.AreEqual(values.Length, list.Count);
-        CollectionAssert.AreEqual(values, list);
+        Assert.AreSequenceEqual(values, list);
     }
 
     [TestMethod]
@@ -49,8 +49,8 @@ public class RentedListTests
         foreach (var value in values)
             list.Add(value);
         Assert.AreEqual(values.Length, list.Count);
-        CollectionAssert.AreEqual(values, list);
-        Assert.IsTrue(list.Capacity > 2);
+        Assert.AreSequenceEqual(values, list);
+        Assert.IsGreaterThan(2, list.Capacity);
     }
 
     [TestMethod]
@@ -60,7 +60,7 @@ public class RentedListTests
         using RentedList<int> list = [];
         foreach (var value in values)
             list.Add(value);
-        CollectionAssert.AreEqual(values, list.Span.ToArray());
+        Assert.AreSequenceEqual(values.AsSpan(), list.Span);
     }
 
     [TestMethod]
@@ -71,7 +71,7 @@ public class RentedListTests
         foreach (var value in values)
             list.Add(value);
         var sliceRange = 1..3;
-        CollectionAssert.AreEqual(values[sliceRange].ToArray(), list[sliceRange].ToArray());
+        Assert.AreSequenceEqual(values[sliceRange], list[sliceRange]);
     }
 
     [TestMethod]
@@ -92,7 +92,7 @@ public class RentedListTests
         using RentedList<int> list = new(initial);
         list.AddRange(additional);
         int[] expected = [1, 2, 3, 4];
-        CollectionAssert.AreEqual(expected, list);
+        Assert.AreSequenceEqual(expected, list);
     }
 
     [TestMethod]
@@ -108,10 +108,10 @@ public class RentedListTests
     public void Remove_ShouldRemoveFirstOccurrence()
     {
         using RentedList<int> list = [1, 2, 3, 2];
-        bool removed = list.Remove(2);
+        var removed = list.Remove(2);
         Assert.IsTrue(removed);
         int[] expected = [1, 3, 2];
-        CollectionAssert.AreEqual(expected, list);
+        Assert.AreSequenceEqual(expected, list);
     }
 
     [TestMethod]
@@ -122,16 +122,16 @@ public class RentedListTests
         var result = new List<int>();
         foreach (var v in list)
             result.Add(v);
-        CollectionAssert.AreEqual(values, result);
+        Assert.AreSequenceEqual(values, result);
     }
 
     [TestMethod]
     public void CopyTo_ShouldCopyItemsToArray()
     {
         using RentedList<int> list = [7, 8];
-        int[] target = new int[2];
+        var target = new int[2];
         list.CopyTo(target, 0);
-        CollectionAssert.AreEqual(list, target);
+        Assert.AreSequenceEqual(list, target);
     }
 
     [TestMethod]

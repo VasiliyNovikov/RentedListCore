@@ -1,4 +1,4 @@
-#if !NET8_0_OR_GREATER
+#if NETSTANDARD2_0
 namespace System.Runtime.CompilerServices;
 
 [AttributeUsage(AttributeTargets.Parameter, AllowMultiple = false, Inherited = false)]

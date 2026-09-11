@@ -34,3 +34,6 @@ dotnet_diagnostic.IDE0055.severity = none  # False positive
 [*{Tests,Benchmarks}.cs]
 dotnet_diagnostic.CA1707.severity = none
 dotnet_diagnostic.CA1822.severity = none
+
+[package_version.cs]
+dotnet_diagnostic.CA1707.severity = none

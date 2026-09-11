@@ -6,6 +6,12 @@ on:
   pull_request:
     branches:
       - master
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: Publish to NuGet
+        type: boolean
+        default: false
 jobs:
   validate:
     strategy:
@@ -16,10 +22,10 @@ jobs:
           - ubuntu-26.04-arm
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Setup .NET SDK
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v6
         with:
           dotnet-version: |
             8.0.x
@@ -36,22 +42,34 @@ jobs:
         run: dotnet test --no-build --logger trx --results-directory "TestResults-${{ matrix.os }}"
 
       - name: Upload Test Results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: test-results-${{ matrix.os }}
           path: TestResults-${{ matrix.os }}
         if: ${{ always() }}
 
   publish:
-    if: ${{ success() && (vars.PUBLISH == 'true' || vars.PUBLISH == 'auto' && github.ref_name == 'master') }}
+    if: >-
+      ${{
+        success() &&
+        (
+          (github.event_name == 'workflow_dispatch' && inputs.publish) ||
+          (github.event_name == 'push' &&
+            (vars.PUBLISH == 'true' ||
+             (vars.PUBLISH == 'auto' && github.ref_name == 'master')))
+        )
+      }}
     needs:
       - validate
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Setup .NET SDK
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v6
         with:
           dotnet-version: |
             8.0.x
@@ -70,5 +88,11 @@ jobs:
       - name: Pack
         run: dotnet pack ./RentedListCore/RentedListCore.csproj -c Release --no-build -p:Version=${{ steps.package_version.outputs.version }}
 
+      - name: NuGet login
+        uses: NuGet/login@v1
+        id: login
+        with:
+          user: ${{ vars.NUGET_USER }}
+
       - name: Push
-        run: dotnet nuget push **/*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_API_KEY }} --skip-duplicate
+        run: dotnet nuget push **/*.nupkg --source https://api.nuget.org/v3/index.json --api-key "${{ steps.login.outputs.NUGET_API_KEY }}" --skip-duplicate

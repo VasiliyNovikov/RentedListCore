@@ -217,15 +217,7 @@ public ref struct ValueRentedList<T> : IDisposable
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool MoveNext()
-        {
-            var index = _index + 1;
-            if (index >= _span.Length)
-                return false;
-            _index = index;
-            return true;
-
-        }
+        public bool MoveNext() => ++_index < _span.Length;
 
         public void Reset() => _index = -1;
 

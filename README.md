@@ -5,6 +5,23 @@ Disposable List structure allocating memory from ArrayPool
 [![RentedListCore release](https://img.shields.io/nuget/v/RentedListCore)](https://www.nuget.org/packages/RentedListCore/)
 [![RentedListCore download count](https://img.shields.io/nuget/dt/RentedListCore)](https://www.nuget.org/packages/RentedListCore/)
 
+## Usage
+
+- `RentedList<T>`: a disposable struct backed by `ArrayPool<T>.Shared`, with list operations, collection interfaces, and `Span`, `Memory`, and `Segment` views.
+- `ValueRentedList<T>`: a disposable `ref struct` that starts empty with a scratch `Span<T>` and switches to the pool when it outgrows it. Supports the same list operations and span views.
+
+```csharp
+using RentedList<int> rented = [1, 2, 3];
+rented.Add(4);
+
+using var value = new ValueRentedList<int>(stackalloc int[4]);
+value.AddRange(1, 2, 3, 4);
+value.Add(5); // Grows into a rented array.
+```
+
+For both types, `Clear()` and `Dispose()` release storage and reset count/capacity to zero.
+Copies share storage; avoid disposing multiple copies or retaining views across growth or disposal.
+
 # Benchmarks
 
 ## Adding elements

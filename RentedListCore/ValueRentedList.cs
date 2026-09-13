@@ -13,7 +13,6 @@ namespace RentedListCore;
 /// enumerators are invalidated by growth, Clear, and Dispose. Clear and Dispose release all
 /// storage, including the scratch buffer, and reset capacity to zero.
 /// </remarks>
-[CollectionBuilder(typeof(ValueRentedListBuilder), nameof(ValueRentedListBuilder.Create))]
 public ref struct ValueRentedList<T> : IDisposable
 {
     private Span<T> _span;
@@ -71,24 +70,6 @@ public ref struct ValueRentedList<T> : IDisposable
         _span = scratchBuffer;
         _count = 0;
         _buffer = null;
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public ValueRentedList(int initialCapacity)
-    {
-        ArgumentOutOfRangeException.ThrowIfNegative(initialCapacity);
-        _buffer = initialCapacity > 0 ? ArrayPool<T>.Shared.Rent(initialCapacity) : null;
-        _span = _buffer;
-        _count = 0;
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public ValueRentedList(params ReadOnlySpan<T> items)
-    {
-        _buffer = items.IsEmpty ? null : ArrayPool<T>.Shared.Rent(items.Length);
-        _span = _buffer;
-        items.CopyTo(_span);
-        _count = items.Length;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

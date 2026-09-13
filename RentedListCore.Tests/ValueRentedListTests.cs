@@ -9,25 +9,9 @@ public class ValueRentedListTests
     [TestMethod]
     public void Constructor_ShouldInitializeWithDefaultCapacity()
     {
-        using ValueRentedList<int> list = [];
+        using ValueRentedList<int> list = new();
         Assert.AreEqual(0, list.Count);
         Assert.AreEqual(0, list.Capacity);
-    }
-
-    [TestMethod]
-    public void Constructor_ShouldInitializeFromSpan()
-    {
-        int[] values = [1, 2, 3];
-        using ValueRentedList<int> list = new(values);
-        Assert.AreSequenceEqual(values.AsSpan(), list.Span);
-    }
-
-    [TestMethod]
-    public void Constructor_ShouldInitializeFromCollectionExpression()
-    {
-        int[] values = [1, 2, 3];
-        using ValueRentedList<int> list = [1, 2, 3];
-        Assert.AreSequenceEqual(values.AsSpan(), list.Span);
     }
 
     [TestMethod]

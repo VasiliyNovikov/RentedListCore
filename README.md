@@ -22,6 +22,28 @@ value.Add(5); // Grows into a rented array.
 For both types, `Clear()` and `Dispose()` release storage and reset count/capacity to zero.
 Copies share storage; avoid disposing multiple copies or retaining views across growth or disposal.
 
+### Rented buffers
+
+`RentedBuffer<T>` is a disposable struct for a fixed rental from `ArrayPool<T>.Shared`.
+The constructor accepts a minimum capacity; `Capacity` reports the actual rental size.
+`Array`, `Span`, `Memory`, and `Segment` expose the entire rental without copying.
+Implicit conversions are available to `T[]`, `Span<T>`, `ReadOnlySpan<T>`, `Memory<T>`,
+`ReadOnlyMemory<T>`, and `ArraySegment<T>`, along with ref and range indexers.
+
+```csharp
+using var buffer = new RentedBuffer<byte>(1024);
+Span<byte> data = buffer;
+data.Clear(); // Pooled storage is not guaranteed to be zeroed.
+buffer[0] = 42;
+Memory<byte> firstKilobyte = buffer.Memory[..1024];
+```
+
+Negative capacities throw; zero capacity and default buffers have empty views.
+`Dispose()` returns the rental and resets capacity to zero; repeated disposal of the
+same instance is harmless. Copies share storage, so dispose only one owner and stop
+using all borrowed views (including the array) before disposal. Arrays are returned
+without clearing their contents.
+
 # Benchmarks
 
 ## Adding elements

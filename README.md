@@ -44,6 +44,44 @@ same instance is harmless. Copies share storage, so dispose only one owner and s
 using all borrowed views (including the array) before disposal. Arrays are returned
 without clearing their contents.
 
+### Stack-or-pool buffers
+
+`ValueRentedBuffer<T>` is a disposable `ref struct` for a fixed buffer. Its constructor
+accepts a minimum capacity and an optional scratch `Span<T>`. It borrows the entire
+scratch span if large enough; otherwise it rents directly from `ArrayPool<T>.Shared`,
+without copying or modifying the scratch storage. There is no growth.
+
+Allocate stack storage conditionally in the caller so larger requests rent without
+executing a stack allocation:
+
+```csharp
+ArgumentOutOfRangeException.ThrowIfNegative(length);
+
+const int StackLimit = 1024; // Bytes, since T is byte.
+using var buffer = new ValueRentedBuffer<byte>(
+    length,
+    length <= StackLimit ? stackalloc byte[length] : default);
+
+Span<byte> data = buffer.Span[..length];
+data.Clear(); // Storage is not guaranteed to be zeroed.
+```
+
+Stack storage must be allocated in the caller's scope; a constructor or factory
+cannot return a buffer referencing its own `stackalloc` storage. Choose stack limits
+in bytes, accounting for the element size. `T` is unconstrained, but `stackalloc`
+requires unmanaged elements; reference types can use array-backed scratch spans or rentals.
+Omitting the scratch span rents directly for positive capacities.
+
+`Capacity` and `Span` expose the entire selected storage, potentially larger than
+requested. Ref and range indexers and implicit conversions to `Span<T>` and
+`ReadOnlySpan<T>` share that storage. Negative capacities throw; zero capacity,
+even with scratch storage, and default buffers have empty views.
+
+`Dispose()` returns only owned rentals, without clearing their contents, and resets
+the buffer to empty. Repeated disposal of the same instance is harmless. Copies share
+storage: dispose only one owner and stop using borrowed views before disposal.
+Caller-owned scratch storage remains owned by the caller.
+
 # Benchmarks
 
 ## Adding elements
